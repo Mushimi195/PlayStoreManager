@@ -25,25 +25,8 @@ export function Login() {
 
                 <div className="space-y-4">
                     <button
-                        onClick={() => login(true)}
-                        className="w-full bg-primary hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
-                    >
-                        <ShieldCheck size={20} />
-                        デモモードで試す
-                    </button>
-
-                    <div className="relative">
-                        <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t border-gray-200 dark:border-gray-700" />
-                        </div>
-                        <div className="relative flex justify-center text-xs uppercase">
-                            <span className="bg-white dark:bg-gray-800 px-2 text-gray-500">または</span>
-                        </div>
-                    </div>
-
-                    <button
-                        disabled
-                        className="w-full bg-white dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-400 dark:text-gray-500 font-semibold py-3 px-4 rounded-xl cursor-not-allowed flex items-center justify-center gap-2"
+                        onClick={() => login(false)}
+                        className="w-full bg-white border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-700 dark:text-white font-bold py-3 px-4 rounded-xl transition-all flex items-center justify-center gap-3"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24">
                             <path
@@ -65,9 +48,23 @@ export function Login() {
                         </svg>
                         Googleでログイン
                     </button>
-                    <p className="text-xs text-gray-400 mt-2">
-                        ※ GoogleログインにはFirebase設定が必要です
-                    </p>
+
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t border-gray-200 dark:border-gray-700" />
+                        </div>
+                        <div className="relative flex justify-center text-xs uppercase">
+                            <span className="bg-white dark:bg-gray-800 px-2 text-gray-500">または</span>
+                        </div>
+                    </div>
+
+                    <button
+                        onClick={() => login(true)}
+                        className="w-full bg-primary hover:bg-blue-600 text-white font-semibold py-3 px-4 rounded-xl transition-colors flex items-center justify-center gap-2"
+                    >
+                        <ShieldCheck size={20} />
+                        デモモードで試す
+                    </button>
                 </div>
             </motion.div>
         </div>

@@ -16,22 +16,28 @@ export function Layout() {
     ];
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
-            <header className="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10">
-                <div className="max-w-md mx-auto px-4 h-14 flex items-center justify-between">
-                    <h1 className="font-bold text-lg text-gray-800 dark:text-white">Play Manager</h1>
-                    <button onClick={logout} className="p-2 text-gray-500 hover:text-red-500">
+    return (
+        <div className="min-h-screen flex flex-col font-sans text-gray-900 dark:text-gray-100">
+            <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-20 border-b border-gray-200/50 dark:border-gray-800/50">
+                <div className="max-w-md mx-auto px-6 h-16 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                        <div className="w-8 h-8 bg-gradient-to-tr from-primary to-violet-500 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-primary/20">
+                            P
+                        </div>
+                        <h1 className="font-extrabold text-lg tracking-tight">Play Manager</h1>
+                    </div>
+                    <button onClick={logout} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition-all">
                         <LogOut size={20} />
                     </button>
                 </div>
             </header>
 
-            <main className="flex-1 max-w-md mx-auto w-full p-4 pb-20">
+            <main className="flex-1 max-w-md mx-auto w-full p-6">
                 <Outlet />
             </main>
 
-            <nav className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 pb-safe">
-                <div className="max-w-md mx-auto flex justify-around items-center h-16">
+            <nav className="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] max-w-sm bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl border border-white/20 dark:border-gray-700 shadow-2xl shadow-gray-200/50 dark:shadow-black/50 rounded-full p-2 z-30">
+                <div className="flex justify-around items-center">
                     {navItems.map((item) => {
                         const Icon = item.icon;
                         const isActive = location.pathname === item.path;
@@ -40,12 +46,13 @@ export function Layout() {
                                 key={item.path}
                                 to={item.path}
                                 className={clsx(
-                                    "flex flex-col items-center justify-center w-full h-full space-y-1",
-                                    isActive ? "text-primary" : "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+                                    "flex items-center justify-center w-12 h-12 rounded-full transition-all duration-300",
+                                    isActive
+                                        ? "bg-primary text-white shadow-lg shadow-primary/40 scale-110"
+                                        : "text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50"
                                 )}
                             >
                                 <Icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-                                <span className="text-[10px] font-medium">{item.label}</span>
                             </Link>
                         );
                     })}
