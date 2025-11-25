@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { useApp } from '../lib/context';
-import { Download, Upload, Trash2, AlertCircle, ChevronRight } from 'lucide-react';
+import { Download, Upload, Trash2, ChevronRight } from 'lucide-react';
 import type { Purchase } from '../lib/types';
 
 export function Settings() {
