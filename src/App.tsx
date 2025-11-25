@@ -44,7 +44,7 @@ function AppRoutes() {
 export default function App() {
   return (
     <AppProvider>
-      <BrowserRouter>
+      <BrowserRouter basename="/PlayStoreManager">
         <AppRoutes />
       </BrowserRouter>
     </AppProvider>
