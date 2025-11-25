@@ -9,6 +9,8 @@ interface AppContextType {
     purchases: Purchase[];
     addPurchase: (purchase: Purchase) => void;
     removePurchase: (id: string) => void;
+    importPurchases: (data: Purchase[]) => void;
+    resetData: () => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -65,8 +67,18 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         localStorage.setItem('purchases', JSON.stringify(newPurchases));
     };
 
+    const importPurchases = (newPurchases: Purchase[]) => {
+        setPurchases(newPurchases);
+        localStorage.setItem('purchases', JSON.stringify(newPurchases));
+    };
+
+    const resetData = () => {
+        setPurchases([]);
+        localStorage.removeItem('purchases');
+    };
+
     return (
-        <AppContext.Provider value={{ user, login, logout, purchases, addPurchase, removePurchase }}>
+        <AppContext.Provider value={{ user, login, logout, purchases, addPurchase, removePurchase, importPurchases, resetData }}>
             {children}
         </AppContext.Provider>
     );
