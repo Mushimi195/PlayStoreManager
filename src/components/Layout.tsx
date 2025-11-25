@@ -16,7 +16,6 @@ export function Layout() {
     ];
 
     return (
-    return (
         <div className="min-h-screen flex flex-col font-sans text-gray-900 dark:text-gray-100">
             <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-20 border-b border-gray-200/50 dark:border-gray-800/50">
                 <div className="max-w-md mx-auto px-6 h-16 flex items-center justify-between">

@@ -31,7 +31,6 @@ export function AddPurchase() {
     };
 
     return (
-    return (
         <div className="space-y-8 pb-24">
             <div className="flex items-center gap-4 pt-4">
                 <button
