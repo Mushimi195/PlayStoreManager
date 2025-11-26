@@ -32,51 +32,90 @@ export function Settings() {
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
-                const text = event.target?.result as string;
-                const lines = text.split('\n');
-                const headers = lines[0].split(',').map(h => h.trim());
+                const content = event.target?.result as string;
+                let newPurchases: Purchase[] = [];
 
-                const newPurchases: Purchase[] = lines.slice(1)
-                    .filter(line => line.trim())
-                    .map(line => {
-                        // Simple CSV parser that handles quotes
-                        const values: string[] = [];
-                        let inQuotes = false;
-                        let currentValue = '';
+                if (file.name.endsWith('.json')) {
+                    // Google Takeout JSON Import
+                    const json = JSON.parse(content);
+                    // Handle both array root and object root (sometimes Takeout wraps in an object)
+                    const items = Array.isArray(json) ? json : (json.history || []);
 
-                        for (let i = 0; i < line.length; i++) {
-                            const char = line[i];
-                            if (char === '"') {
-                                inQuotes = !inQuotes;
-                            } else if (char === ',' && !inQuotes) {
-                                values.push(currentValue);
-                                currentValue = '';
-                            } else {
-                                currentValue += char;
+                    newPurchases = items.map((item: any) => {
+                        // Parse price string (e.g., "¥1,200", "JPY 1200")
+                        let price = 0;
+                        let currency = 'JPY';
+                        if (item.purchaseAmount) {
+                            const match = item.purchaseAmount.match(/[\d,.]+/);
+                            if (match) {
+                                price = Number(match[0].replace(/,/g, ''));
                             }
                         }
-                        values.push(currentValue);
 
-                        const purchase: any = {};
-                        headers.forEach((header, index) => {
-                            let value = values[index]?.trim();
-                            if (value?.startsWith('"') && value?.endsWith('"')) {
-                                value = value.slice(1, -1);
-                            }
-                            if (header === 'price') {
-                                purchase[header] = Number(value);
-                            } else {
-                                purchase[header] = value;
-                            }
-                        });
-                        return purchase as Purchase;
+                        // Map category
+                        let category: Purchase['category'] = 'App';
+                        const type = (item.purchaseType || '').toLowerCase();
+                        if (type.includes('subscription')) category = 'Subscription';
+                        else if (type.includes('in-app')) category = 'IAP';
+                        else if (type.includes('game')) category = 'Game';
+
+                        return {
+                            id: item.orderId || crypto.randomUUID(),
+                            name: item.title || 'Unknown Item',
+                            price: price,
+                            currency: currency,
+                            date: item.purchaseTime ? new Date(item.purchaseTime).toISOString() : new Date().toISOString(),
+                            category: category,
+                            store: 'Google Play',
+                        } as Purchase;
                     });
+                } else {
+                    // Existing CSV Import Logic
+                    const lines = content.split('\n');
+                    const headers = lines[0].split(',').map(h => h.trim());
+
+                    newPurchases = lines.slice(1)
+                        .filter(line => line.trim())
+                        .map(line => {
+                            // Simple CSV parser that handles quotes
+                            const values: string[] = [];
+                            let inQuotes = false;
+                            let currentValue = '';
+
+                            for (let i = 0; i < line.length; i++) {
+                                const char = line[i];
+                                if (char === '"') {
+                                    inQuotes = !inQuotes;
+                                } else if (char === ',' && !inQuotes) {
+                                    values.push(currentValue);
+                                    currentValue = '';
+                                } else {
+                                    currentValue += char;
+                                }
+                            }
+                            values.push(currentValue);
+
+                            const purchase: any = {};
+                            headers.forEach((header, index) => {
+                                let value = values[index]?.trim();
+                                if (value?.startsWith('"') && value?.endsWith('"')) {
+                                    value = value.slice(1, -1);
+                                }
+                                if (header === 'price') {
+                                    purchase[header] = Number(value);
+                                } else {
+                                    purchase[header] = value;
+                                }
+                            });
+                            return purchase as Purchase;
+                        });
+                }
 
                 importPurchases(newPurchases);
-                alert('インポートが完了しました');
+                alert(`${newPurchases.length}件のデータをインポートしました`);
             } catch (error) {
                 console.error('Import error:', error);
-                alert('CSVの読み込みに失敗しました');
+                alert('ファイルの読み込みに失敗しました。形式を確認してください。');
             }
             // Reset input
             if (fileInputRef.current) fileInputRef.current.value = '';
@@ -116,7 +155,7 @@ export function Settings() {
                         <div className="relative w-full">
                             <input
                                 type="file"
-                                accept=".csv"
+                                accept=".csv,.json"
                                 onChange={handleImport}
                                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                             />
@@ -125,8 +164,8 @@ export function Settings() {
                                     <Upload size={20} />
                                 </div>
                                 <div className="flex-1">
-                                    <h3 className="font-bold text-gray-900 dark:text-white">CSVインポート</h3>
-                                    <p className="text-xs text-gray-500 mt-0.5">バックアップから復元</p>
+                                    <h3 className="font-bold text-gray-900 dark:text-white">インポート (CSV / JSON)</h3>
+                                    <p className="text-xs text-gray-500 mt-0.5">バックアップまたはGoogle Takeout</p>
                                 </div>
                                 <ChevronRight size={20} className="text-gray-400" />
                             </div>
